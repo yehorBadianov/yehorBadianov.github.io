@@ -1,15 +1,21 @@
 //дублікація коду можна закинути в одну функції(але шо робити з урлой)
 
 // Що зробити
-// 1. Обработать дату останнього коміта
-// 2. Добавить ще якусь інфу в овервью +
-// 3. Доробить стіля(футер. оформить всю інфу з запросів) + зробить якийсь хедер +хедер
+// навісить стіля на репозирорії імя
 // 4. Зробити лоадер
+
+require.config({
+  paths: {
+      env: 'js/config'
+  }
+});
+
+require(['env'],  function(env) {
 
 async function getDataFromGitHub() {
   const myHeaders = new Headers();
   myHeaders.append("Accept", "application/vnd.github+json");
-  myHeaders.append("Authorization", "Bearer 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");
+  myHeaders.append("Authorization", "Bearer " + env.TOKEN);
 
   //обробити помилку
   const requestOptions = {
@@ -19,8 +25,8 @@ async function getDataFromGitHub() {
   };
 
   const response = await fetch("https://api.github.com/search/repositories?q=user:yehorBadianov", requestOptions);
-  const data = await response.json();
-  
+  const data = response.json();
+
   return data;
 }
 
@@ -28,7 +34,7 @@ async function getDataFromGitHub() {
 async function getPersonalUserDataFromGitHub() {
   const myHeaders = new Headers();
   myHeaders.append("Accept", "application/vnd.github+json");
-  myHeaders.append("Authorization", "Bearer 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");
+  myHeaders.append("Authorization", "Bearer " + env.TOKEN);
 
   var requestOptions = {
     method: 'GET',
@@ -48,7 +54,6 @@ async function getLastCommit() {
   const data = await response.json();
   return data;
 }
-
 
 function setOverviewContent() {
   const userData = getPersonalUserDataFromGitHub();
@@ -74,19 +79,18 @@ function setOverviewContent() {
   // додати стилі для p а також додати ще якусь інфу
 //ВИВОЖУ ДАТУ СТВОРЕННЯ В ОВЕРВЬЮ
   userData.then(data => {
-    const handleAccCreatedDate = handleDate(data.created_at);
+    const handleAccCreatedDate = handleDateFromPromis(data.created_at);
     pOverview.innerHTML = `Account created: ${handleAccCreatedDate}`;
     contentOverviewBlock.appendChild(pOverview);
   });
 
 }
 
-function handleDate(date) {
+function handleDateFromPromis(date) {
   const handleDate = date.slice(0, 10).split('-').reverse().join('/');
 
   return handleDate;
 }
-
 
 // PROFILE PHOTO and need to add name
 function setInfoProfile() {
@@ -137,14 +141,15 @@ function setRepoName() {
       li.addEventListener('click', () => {
         const commit = getLastCommit();
         commit.then(commitData => {
-          const commitDate = handleDate(commitData.commit.author.date);
+          const commitDate = handleDateFromPromis(commitData.commit.author.date);
 
           const span = document.createElement('span');
           span.classList.add('commit-date-style');
           span.textContent = commitDate;
-
-          li.appendChild(span);
-          // li.textContent += li.textContent.includes(commitDate) ? '' : commitDate;
+          if (li.textContent.includes(span.textContent)) {
+            return;
+          } else li.appendChild(span);
+          // li.textContent += li.textContent.includes(span.textContent) ? '' : span.textContent;
         });
       });
     });
@@ -213,3 +218,4 @@ function checkIfBlockIsShown(repoBlock, overviewBlick, repoBtn, overviewBtn) {
 // }
 
 // showOverview();
+});
