@@ -192,7 +192,7 @@ ul .list-item:hover {
   float: right;
 }
 
-.test-div {
+.info-Div {
   height: 150px;
   width: 550px;
   margin: 50px;
@@ -256,4 +256,19 @@ ul .list-item:hover {
 
 .header-links a:hover {
   color:#9DA7B3
+}
+
+/* loader */
+
+.loader {
+  background-color: white;
+  width: 200px;
+  height: 50px;
+  position: absolute;
+  z-index: 1;
+  margin: 220px 80px;
+  display: none;
+  color: black;
+  padding: 10px;
+  font-size: 18px;
 }

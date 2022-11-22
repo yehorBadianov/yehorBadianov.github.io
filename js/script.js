@@ -1,9 +1,5 @@
-//дублікація коду можна закинути в одну функції(але шо робити з урлой)
-
-// Що зробити
-// навісить стіля на репозирорії імя
-// 4. Зробити лоадер
-
+// for work with the token
+// because token was deleted when I pushed it to public repository
 require.config({
   paths: {
       env: 'js/config'
@@ -23,11 +19,17 @@ async function getDataFromGitHub() {
     headers: myHeaders,
     redirect: 'follow'
   };
+  
+  try {
+    displayLoader();
+    const response = await fetch("https://api.github.com/search/repositories?q=user:yehorBadianov", requestOptions);
+    const data = await response.json();
+    hideLoader();
 
-  const response = await fetch("https://api.github.com/search/repositories?q=user:yehorBadianov", requestOptions);
-  const data = response.json();
-
-  return data;
+    return data;
+  } catch (error) {
+    return `Error ${error}`;
+  }
 }
 
 // Отримую дані про юзера з гіта, можна буде цим промісом переписати фото та ім'я
@@ -42,48 +44,60 @@ async function getPersonalUserDataFromGitHub() {
     redirect: 'follow'
   };
 
-  const response = await fetch("https://api.github.com/users/yehorBadianov", requestOptions);
-  const data = await response.json();
-  
-  return data;
+  try {
+    displayLoader();
+    const response = await fetch("https://api.github.com/users/yehorBadianov", requestOptions);
+    const data = await response.json();
+    hideLoader();
+
+    return data;
+  } catch (error) {
+    return `Error ${error}`;
+  }
 }
 
 //запрос на дату репо
 async function getLastCommit() {
-  const response = await fetch('https://api.github.com/repos/yehorBadianov/yehorBadianov.github.io/commits/main');
-  const data = await response.json();
-  return data;
+  try {
+    displayLoader();
+    const response = await fetch('https://api.github.com/repos/yehorBadianov/yehorBadianov.github.io/commits/main');
+    const data = await response.json();
+    hideLoader();
+
+    return data;
+  } catch (error) {
+    return `Error ${error}`;
+  }
 }
 
 function setOverviewContent() {
   const userData = getPersonalUserDataFromGitHub();
-  console.log('Overview', userData)
 
   const contentOverviewBlock = document.querySelector('.content-overview');
-  // class - content-list-overview-display - none
   contentOverviewBlock.classList.add('content-list-overview-display');
+
   const pOverview = document.createElement('p');
   pOverview.classList.add('overview-text-date');
 
-  //Тест створення елементів
-  const testDiv = document.createElement('div');
-  const testP = document.createElement('p');
-  // стилі до імені всередині блоку
-  userData.then(name => {
-    testP.textContent = `Hello everyone! My name is ${name.name} :)`;
-  });
-  testDiv.classList.add('test-div');
-  testDiv.appendChild(testP);
-  contentOverviewBlock.appendChild(testDiv);
+  const infoDiv = document.createElement('div');
+  const infoDivText = document.createElement('p');
 
-  // додати стилі для p а також додати ще якусь інфу
-//ВИВОЖУ ДАТУ СТВОРЕННЯ В ОВЕРВЬЮ
+  // add user name
+  userData.then(name => {
+    infoDivText.textContent = `Hello everyone! My name is ${name.name} :)`;
+  });
+
+  infoDiv.classList.add('info-Div');
+  infoDiv.appendChild(infoDivText);
+  contentOverviewBlock.appendChild(infoDiv);
+
+// date of gitHub created
   userData.then(data => {
     const handleAccCreatedDate = handleDateFromPromis(data.created_at);
+
     pOverview.innerHTML = `Account created: ${handleAccCreatedDate}`;
     contentOverviewBlock.appendChild(pOverview);
   });
-
 }
 
 function handleDateFromPromis(date) {
@@ -92,52 +106,47 @@ function handleDateFromPromis(date) {
   return handleDate;
 }
 
-// PROFILE PHOTO and need to add name
 function setInfoProfile() {
   const userData = getDataFromGitHub();
-  console.log(userData)
 
   const avatarDiv = document.querySelector('.content-img');
   const profileImg = document.createElement('img');
-  const nameTag = document.createElement('p');
-  nameTag.classList.add('user-name-style');
-  //зробити стиля для імені
   profileImg.classList.add('profile-img');
 
-  //ДОДАЮ ІМ'Я
+  const nameTag = document.createElement('p');
+  nameTag.classList.add('user-name-style');
+
+  //add name and photo
   userData.then(data => {
-    profileImg.src = data.items[0].owner.avatar_url;
+    const userPhoto = data.items[0].owner.avatar_url;
+    profileImg.src = userPhoto;
     avatarDiv.appendChild(profileImg);
 
-    nameTag.innerHTML = data.items[0].owner.login;
+    const userNameLogin = data.items[0].owner.login;
+    nameTag.innerHTML = userNameLogin;
     avatarDiv.append(nameTag);
-
   });
 
   return userData;
 }
 
-// РЕПОЗИТОРІЇ
 function setRepoName() {
   const userData = setInfoProfile();
 
   const contentListBlock = document.querySelector('.content-list');
-  const repoList = document.querySelector('.content-list-ul');
-
   contentListBlock.classList.add('content-list-display');
 
-  //додати щоб лі були лінками
-  // reposetory
+  const repoList = document.querySelector('.content-list-ul');
+
   userData.then(data => {
     data.items.map(element => {
       const li = document.createElement('li');
-
       li.classList.add('list-item');
+
       li.innerHTML = element.name;
       repoList.appendChild(li);
 
-      // add last commit date
-      // ДОБАВИТЬ НАЗВУ КОМІТА ХЕШ І ДЕНЬ ЯК В ГІТ ХАБІ
+      // last commit date
       li.addEventListener('click', () => {
         const commit = getLastCommit();
         commit.then(commitData => {
@@ -145,11 +154,12 @@ function setRepoName() {
 
           const span = document.createElement('span');
           span.classList.add('commit-date-style');
+
           span.textContent = commitDate;
+
           if (li.textContent.includes(span.textContent)) {
             return;
           } else li.appendChild(span);
-          // li.textContent += li.textContent.includes(span.textContent) ? '' : span.textContent;
         });
       });
     });
@@ -177,7 +187,6 @@ function addEventsForNavContent() {
     showContentFromNav(contentOverviewBlock, showOverviewBtn, 'content-list-overview-display');
     checkIfBlockIsShown(contentOverviewBlock, contentListBlock, showOverviewBtn, showRepoBtn);
   });
-
 }
 
 addEventsForNavContent();
@@ -207,15 +216,20 @@ function checkIfBlockIsShown(repoBlock, overviewBlick, repoBtn, overviewBtn) {
   }
 }
 
-// function showOverview() {
-//   const contentListBlock = document.querySelector('.content-list');
-//   const showOverviewBtn = document.querySelector('.overview');
+function displayLoader() {
+  const loader = document.querySelector('.loader');
+  loader.style.display = "block";
+  setTimeout(() => {
+    loader.style.display = "none";
+  }, 5000)
+}
 
-//   showOverviewBtn.addEventListener('click', (e) => {
-//     e.preventDefault();
+function hideLoader() {
+  const loader = document.querySelector('.loader')
+  setTimeout(() => {
+    loader.style.display = "none";
+  }, 1000)
+  
+}
 
-//   });
-// }
-
-// showOverview();
 });
