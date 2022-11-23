@@ -1,55 +1,58 @@
-// for work with the token
-// because token was deleted when I pushed it to public repository
-// console.log(${{ secrets.TOKEN }})
 
-require.config({
-  paths: {
-      env: 'js/config'
-  }
-});
+// async function getDataFromGitHub() {
+//   const myHeaders = new Headers();
+//   myHeaders.append("Accept", "application/vnd.github+json");
+//   myHeaders.append("Authorization", "Bearer " + env.TOKEN);
 
-require(['env'],  function(env) {
-
-async function getDataFromGitHub() {
-  const myHeaders = new Headers();
-  myHeaders.append("Accept", "application/vnd.github+json");
-  myHeaders.append("Authorization", "Bearer " + ${{ secrets.TOKEN }});
-
-  //обробити помилку
-  const requestOptions = {
-    method: 'GET',
-    headers: myHeaders,
-    redirect: 'follow'
-  };
+//   //обробити помилку
+//   const requestOptions = {
+//     method: 'GET',
+//     headers: myHeaders,
+//     redirect: 'follow'
+//   };
   
-  try {
-    displayLoader();
-    const response = await fetch("https://api.github.com/search/repositories?q=user:yehorBadianov", requestOptions);
-    const data = await response.json();
-    hideLoader();
+//   try {
+//     displayLoader();
+//     const response = await fetch("https://api.github.com/search/repositories?q=user:yehorBadianov", requestOptions);
+//     const data = await response.json();
+//     hideLoader();
 
-    return data;
-  } catch (error) {
-    return `Error ${error}`;
-  }
-}
+//     return data;
+//   } catch (error) {
+//     return `Error ${error}`;
+//   }
+// }
 
 // Отримую дані про юзера з гіта, можна буде цим промісом переписати фото та ім'я
-async function getPersonalUserDataFromGitHub() {
-  const myHeaders = new Headers();
-  myHeaders.append("Accept", "application/vnd.github+json");
-  myHeaders.append("Authorization", "Bearer " + env.TOKEN);
+// async function getPersonalUserDataFromGitHub() {
+//   const myHeaders = new Headers();
+//   myHeaders.append("Accept", "application/vnd.github+json");
+//   myHeaders.append("Authorization", "Bearer " + env.TOKEN);
 
-  var requestOptions = {
-    method: 'GET',
-    headers: myHeaders,
-    redirect: 'follow'
-  };
+//   var requestOptions = {
+//     method: 'GET',
+//     headers: myHeaders,
+//     redirect: 'follow'
+//   };
 
+//   try {
+//     displayLoader();
+//     const response = await fetch("https://api.github.com/users/yehorBadianov", requestOptions);
+//     const data = await response.json();
+//     hideLoader();
+
+//     return data;
+//   } catch (error) {
+//     return `Error ${error}`;
+//   }
+// }
+
+//
+async function getUser() {
   try {
     displayLoader();
-    const response = await fetch("https://api.github.com/users/yehorBadianov", requestOptions);
-    const data = await response.json();
+    const respons = await fetch('https://api.github.com/users/yehorBadianov');
+    const data = await respons.json();
     hideLoader();
 
     return data;
@@ -57,6 +60,22 @@ async function getPersonalUserDataFromGitHub() {
     return `Error ${error}`;
   }
 }
+// getUser()
+
+async function getRepo() {
+  try {
+    displayLoader();
+    const respons = await fetch('https://api.github.com/users/yehorBadianov/repos');
+    const data = await respons.json();
+    hideLoader();
+  
+    return data;
+  } catch (error) {
+    return `Error ${error}`;
+  }
+}
+
+//
 
 //запрос на дату репо
 async function getLastCommit() {
@@ -73,7 +92,7 @@ async function getLastCommit() {
 }
 
 function setOverviewContent() {
-  const userData = getPersonalUserDataFromGitHub();
+  const userData = getUser();
 
   const contentOverviewBlock = document.querySelector('.content-overview');
   contentOverviewBlock.classList.add('content-list-overview-display');
@@ -109,7 +128,7 @@ function handleDateFromPromis(date) {
 }
 
 function setInfoProfile() {
-  const userData = getDataFromGitHub();
+  const userData = getUser();
 
   const avatarDiv = document.querySelector('.content-img');
   const profileImg = document.createElement('img');
@@ -120,20 +139,21 @@ function setInfoProfile() {
 
   //add name and photo
   userData.then(data => {
-    const userPhoto = data.items[0].owner.avatar_url;
+    const userPhoto = data.avatar_url;
     profileImg.src = userPhoto;
     avatarDiv.appendChild(profileImg);
 
-    const userNameLogin = data.items[0].owner.login;
+    const userNameLogin = data.login;
     nameTag.innerHTML = userNameLogin;
     avatarDiv.append(nameTag);
   });
 
   return userData;
 }
+setInfoProfile()
 
 function setRepoName() {
-  const userData = setInfoProfile();
+  const userData = getRepo();
 
   const contentListBlock = document.querySelector('.content-list');
   contentListBlock.classList.add('content-list-display');
@@ -141,7 +161,7 @@ function setRepoName() {
   const repoList = document.querySelector('.content-list-ul');
 
   userData.then(data => {
-    data.items.map(element => {
+    data.map(element => {
       const li = document.createElement('li');
       li.classList.add('list-item');
 
@@ -233,5 +253,3 @@ function hideLoader() {
   }, 1000)
   
 }
-
-});
