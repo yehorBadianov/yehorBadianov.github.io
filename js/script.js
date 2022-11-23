@@ -1,53 +1,3 @@
-
-// async function getDataFromGitHub() {
-//   const myHeaders = new Headers();
-//   myHeaders.append("Accept", "application/vnd.github+json");
-//   myHeaders.append("Authorization", "Bearer " + env.TOKEN);
-
-//   //обробити помилку
-//   const requestOptions = {
-//     method: 'GET',
-//     headers: myHeaders,
-//     redirect: 'follow'
-//   };
-  
-//   try {
-//     displayLoader();
-//     const response = await fetch("https://api.github.com/search/repositories?q=user:yehorBadianov", requestOptions);
-//     const data = await response.json();
-//     hideLoader();
-
-//     return data;
-//   } catch (error) {
-//     return `Error ${error}`;
-//   }
-// }
-
-// Отримую дані про юзера з гіта, можна буде цим промісом переписати фото та ім'я
-// async function getPersonalUserDataFromGitHub() {
-//   const myHeaders = new Headers();
-//   myHeaders.append("Accept", "application/vnd.github+json");
-//   myHeaders.append("Authorization", "Bearer " + env.TOKEN);
-
-//   var requestOptions = {
-//     method: 'GET',
-//     headers: myHeaders,
-//     redirect: 'follow'
-//   };
-
-//   try {
-//     displayLoader();
-//     const response = await fetch("https://api.github.com/users/yehorBadianov", requestOptions);
-//     const data = await response.json();
-//     hideLoader();
-
-//     return data;
-//   } catch (error) {
-//     return `Error ${error}`;
-//   }
-// }
-
-//
 async function getUser() {
   try {
     displayLoader();
@@ -60,7 +10,6 @@ async function getUser() {
     return `Error ${error}`;
   }
 }
-// getUser()
 
 async function getRepo() {
   try {
@@ -74,8 +23,6 @@ async function getRepo() {
     return `Error ${error}`;
   }
 }
-
-//
 
 //запрос на дату репо
 async function getLastCommit() {
