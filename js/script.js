@@ -1,6 +1,6 @@
 // for work with the token
 // because token was deleted when I pushed it to public repository
-console.log(${{ secrets.FAKE_TOKEN }})
+// console.log(${{ secrets.TOKEN }})
 
 require.config({
   paths: {
@@ -13,7 +13,7 @@ require(['env'],  function(env) {
 async function getDataFromGitHub() {
   const myHeaders = new Headers();
   myHeaders.append("Accept", "application/vnd.github+json");
-  myHeaders.append("Authorization", "Bearer " + env.TOKEN);
+  myHeaders.append("Authorization", "Bearer " + ${{ secrets.TOKEN }});
 
   //обробити помилку
   const requestOptions = {
