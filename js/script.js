@@ -1,5 +1,7 @@
 // for work with the token
 // because token was deleted when I pushed it to public repository
+console.log(${{ secrets.FAKE_TOKEN }})
+
 require.config({
   paths: {
       env: 'js/config'
