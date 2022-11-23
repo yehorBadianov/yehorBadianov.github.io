@@ -185,18 +185,18 @@ function checkIfBlockIsShown(repoBlock, overviewBlick, repoBtn, overviewBtn) {
   }
 }
 
-// function displayLoader() {
-//   const loader = document.querySelector('.loader');
-//   loader.style.display = "block";
-//   setTimeout(() => {
-//     loader.style.display = "none";
-//   }, 5000)
-// }
+function displayLoader() {
+  const loader = document.querySelector('.loader');
+  loader.style.display = "block";
+  setTimeout(() => {
+    loader.style.display = "none";
+  }, 5000)
+}
 
-// function hideLoader() {
-//   const loader = document.querySelector('.loader')
-//   setTimeout(() => {
-//     loader.style.display = "none";
-//   }, 1000)
+function hideLoader() {
+  const loader = document.querySelector('.loader')
+  setTimeout(() => {
+    loader.style.display = "none";
+  }, 1000)
   
-// }
+}
