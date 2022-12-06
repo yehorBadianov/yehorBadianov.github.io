@@ -123,7 +123,7 @@ function setRepoName() {
           const span = document.createElement('span');
           span.classList.add('commit-date-style');
 
-          span.textContent = commitDate;
+          span.textContent = `Date of last change: ${commitDate}`;
 
           li = li.textContent.includes(span.textContent) ? '' : li.appendChild(span);
         });
