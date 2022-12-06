@@ -1,3 +1,5 @@
+setInfoProfile();
+
 async function getUser() {
   try {
     displayLoader();
@@ -69,9 +71,7 @@ function setOverviewContent() {
 }
 
 function handleDateFromPromis(date) {
-  const handleDate = date.slice(0, 10).split('-').reverse().join('/');
-
-  return handleDate;
+  return date.slice(0, 10).split('-').reverse().join('/');
 }
 
 function setInfoProfile() {
@@ -97,7 +97,6 @@ function setInfoProfile() {
 
   return userData;
 }
-setInfoProfile()
 
 function setRepoName() {
   const userData = getRepo();
@@ -109,7 +108,7 @@ function setRepoName() {
 
   userData.then(data => {
     data.map(element => {
-      const li = document.createElement('li');
+      let li = document.createElement('li');
       li.classList.add('list-item');
 
       li.innerHTML = element.name;
@@ -126,9 +125,7 @@ function setRepoName() {
 
           span.textContent = commitDate;
 
-          if (li.textContent.includes(span.textContent)) {
-            return;
-          } else li.appendChild(span);
+          li = li.textContent.includes(span.textContent) ? '' : li.appendChild(span);
         });
       });
     });
@@ -188,9 +185,7 @@ function checkIfBlockIsShown(repoBlock, overviewBlick, repoBtn, overviewBtn) {
 function displayLoader() {
   const loader = document.querySelector('.loader');
   loader.style.display = "block";
-  setTimeout(() => {
-    loader.style.display = "none";
-  }, 5000)
+
 }
 
 function hideLoader() {
